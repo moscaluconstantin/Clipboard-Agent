@@ -30,8 +30,6 @@
                 result += newChar;
             }
 
-            Console.WriteLine($"Converted from {sourceCharsetName} to {targetCharsetName}");
-
             return string.Concat(result);
         }
 

@@ -20,7 +20,13 @@ namespace ClipboardAgent
             {
                 converter.TryDetectCharsetName(text, out var charset);
 
-                var result = charset != "en" ? converter.Convert(text, charset, "en") : converter.Convert(text, "en", "ru");
+                if (charset != "en")
+                {
+                    TryReplace(text, charset, "en", converter);
+                    return;
+                }
+
+                TryReplace(text, "en", charset, converter);
 
                 return;
             }
@@ -29,16 +35,11 @@ namespace ClipboardAgent
             {
                 converter.TryDetectCharsetName(text, out var charset);
 
-                var result = converter.Convert(text, charset != "en" ? charset : "en", args[0]);
-                ClipboardService.SetText(result);
-
-                Console.WriteLine("Your clipboard was updated.");
+                TryReplace(text, charset != "en" ? charset : "en", args[0], converter);
                 return;
             }
 
-
-
-            Console.WriteLine($"Convert from {args[0]} to {args[1]}");
+            TryReplace(text, args[0], args[1], converter);
         }
 
         private static void TryReplace(string text, string from, string to, CharsetConverter converter)
@@ -58,7 +59,7 @@ namespace ClipboardAgent
             var result = converter.Convert(text, from, to);
             ClipboardService.SetText(result);
 
-            Console.WriteLine("Your clipboard was updated.");
+            Console.WriteLine($"Your clipboard was updated ({from} -> {to}).");
         }
     }
 }
